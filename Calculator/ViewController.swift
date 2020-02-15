@@ -23,6 +23,16 @@ class ViewController: UIViewController {
         guard let number = Double(displayLabel.text!) else {
             fatalError("Could not convert text on screen to number")
         }
+        
+        if let operation = sender.currentTitle {
+            if operation == "+/-" {
+                displayLabel.text = String(number * -1)
+            } else if operation == "AC" {
+                displayLabel.text = "0"
+            } else if operation == "%" {
+                displayLabel.text  = String(number / 100)
+            }
+        }
     
     }
 
