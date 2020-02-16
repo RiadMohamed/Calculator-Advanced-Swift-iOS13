@@ -12,27 +12,36 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var displayLabel: UILabel!
     var currentNumber: String = ""
-    var isFinishedTyping: Bool = true
+    private var isFinishedTyping: Bool = true
+    private var displayValue: Double {
+        get {
+            guard let number = Double(displayLabel.text!) else {
+                fatalError("Could not convert text on screen to number")
+            }
+            return number
+        }
+        set {
+            displayLabel.text = String(newValue)
+        }
+    }
     
-    
+    private var calculator = CalculatorBrain()
+
     
     @IBAction func calcButtonPressed(_ sender: UIButton) {
         
         //What should happen when a non-number button is pressed
         isFinishedTyping = true
-        guard let number = Double(displayLabel.text!) else {
-            fatalError("Could not convert text on screen to number")
-        }
+        calculator.setNumber(displayValue)
         
         if let operation = sender.currentTitle {
-            if operation == "+/-" {
-                displayLabel.text = String(number * -1)
-            } else if operation == "AC" {
-                displayLabel.text = "0"
-            } else if operation == "%" {
-                displayLabel.text  = String(number / 100)
+            guard let result =  calculator.calculate(symbol: operation) else {
+                fatalError("Operation is not supported")
             }
+            displayValue = result
         }
+        
+        
     
     }
 
@@ -45,6 +54,17 @@ class ViewController: UIViewController {
                 displayLabel.text = numValue
                 isFinishedTyping = false
             } else {
+                
+                if numValue == "." {
+                    
+                    let isInt = floor(displayValue) == displayValue
+                    
+                    if !isInt {
+                        return
+                    }
+                    
+                }
+                
                 displayLabel.text! += numValue
             }
 //            currentNumber += numValue
